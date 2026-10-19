@@ -163,6 +163,25 @@
       background: var(--gold-soft);
     }
 
+    .mobile-menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      background: var(--bg-card);
+      color: var(--accent-dark);
+      font-size: 1rem;
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(0,0,0,.06);
+      cursor: pointer;
+    }
+    .hamburger-lines { display: flex; flex-direction: column; gap: 4px; width: 22px; }
+    .hamburger-lines span { display: block; height: 2.5px; width: 22px; border-radius: 3px; background: currentColor; }
+
     .nav-bar {
       display: flex;
       flex-wrap: wrap;
@@ -806,18 +825,44 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 700px) {
+      /* Mobile-first layout: simple menu, language choice, then the root ancestor. */
+      .wrap { display: flex; flex-direction: column; gap: 12px; padding: 10px 10px 28px; }
+      header { display: contents; }
+      .logo-wrap, header h1, header .subtitle, .header-search { display: none; }
+      .mobile-menu-toggle { display: flex; order: 1; }
+      .nav-bar { display: none; order: 2; width: 100%; margin: 0; padding: 10px; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(255,250,243,.96); border: 1px solid var(--border); border-radius: 14px; }
+      .nav-bar.mobile-open { display: grid; }
+      .nav-btn { width: 100%; min-height: 46px; padding: 10px 8px; border-radius: 12px; font-size: .91rem; line-height: 1.25; }
+      .language-switch { order: 3; width: 100%; margin: 0; padding: 10px; gap: 8px; border-radius: 14px; }
+      .language-switch strong { width: 100%; text-align: center; font-size: .9rem; }
+      .language-btn { flex: 1; min-height: 44px; padding: 9px 12px; }
+      #person-view { order: 4; scroll-margin-top: 10px; }
+      .panel { order: 5; padding: 20px 14px; margin-bottom: 0; }
+      footer { order: 6; margin-top: 4px; }
       .children-grid, .memory-grid { grid-template-columns: 1fr; }
-      .person-card { padding: 24px 16px; }
+      .person-card { padding: 22px 13px; border-radius: 14px; }
+      .person-name { font-size: clamp(1.8rem, 8vw, 2.25rem); }
+      .person-label { font-size: .76rem; }
       .search-box { flex-direction: column; }
       .person-photo { width: 140px; height: 140px; }
       .memory-photo { width: 130px; height: 130px; }
+      .child-card { padding: 16px 12px; }
+    }
+    @media (max-width: 380px) {
+      .nav-bar { grid-template-columns: 1fr; }
+      .language-switch { gap: 6px; }
+      .language-btn { font-size: .92rem; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
+      <button type="button" class="mobile-menu-toggle" id="mobile-menu-toggle" aria-expanded="false" aria-controls="main-navigation" onclick="toggleMobileMenu()">
+        <span class="hamburger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span data-en="Menu · Family Sections" data-ne="मेनु · परिवारका खण्डहरू">Menu · Family Sections</span>
+      </button>
       <div class="logo-wrap">
         <svg class="site-logo" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -854,7 +899,7 @@
         <div id="search-results" class="search-results"></div>
       </div>
 
-      <div class="nav-bar">
+      <div class="nav-bar" id="main-navigation">
         <button class="nav-btn active" data-view="tree" onclick="showView('tree')">Family Tree</button>
         <button class="nav-btn" data-view="treeview" onclick="showView('treeview')">Tree View</button>
         <button class="nav-btn memory-btn" data-view="memory" onclick="showView('memory')">In Loving Memory</button>
@@ -876,7 +921,7 @@
       <p class="memory-intro">Those who left us too soon remain forever in our hearts and in this family tree.</p>
       <div class="memory-grid">
         <div class="memory-card">
-          <img class="memory-photo" src="photos/Fulkumari_Chhetri.jpg" alt="Fulkumari Chhetri" />
+          <img class="memory-photo" src="./Fulkumari_Chhetri.jpg" alt="Fulkumari Chhetri" />
           <div class="memory-name">Fulkumari Chhetri</div>
           <div class="memory-relation">Beloved Grandmother</div>
           <p class="memory-text">
@@ -886,7 +931,7 @@
           <p class="memory-rest">Forever remembered • Forever loved</p>
         </div>
         <div class="memory-card">
-          <img class="memory-photo" src="photos/Hari_Chhetri.jpg" alt="Hari Chhetri" />
+          <img class="memory-photo" src="./Hari_Chhetri.jpg" alt="Hari Chhetri" />
           <div class="memory-name">Hari Chhetri</div>
           <div class="memory-relation">Beloved Son of Fulkumari Chhetri</div>
           <p class="memory-text">
@@ -905,8 +950,6 @@
     <!-- Tree View -->
     <div id="treeview-panel" class="panel">
       <h2 data-en="Family Tree View" data-ne="वंशवृक्ष दृश्य">Family Tree View / वंशवृक्ष दृश्य</h2>
-      <p data-en="Explore family branches below, or open and download the original family tree PDF." data-ne="तल परिवारका शाखाहरू हेर्नुहोस् वा मूल वंशवृक्ष PDF खोल्नुहोस् र डाउनलोड गर्नुहोस्।" style="text-align:center;color:var(--ink-soft);margin-bottom:16px;">Explore family branches below, or open and download the original family tree PDF.</p>
-      <div id="visual-tree" class="visual-tree" aria-label="Interactive family tree"></div>
       <div class="pdf-actions">
         <a class="pdf-btn" href="./family_tree_sketch.pdf" target="_blank" rel="noopener" data-en="Open PDF in New Tab" data-ne="PDF नयाँ ट्याबमा खोल्नुहोस्">Open PDF in New Tab</a>
         <a class="pdf-btn download" href="./family_tree_sketch.pdf" download="Our_Ancestral_Legacy_Tree.pdf" data-en="Download Family Tree PDF" data-ne="वंशवृक्ष PDF डाउनलोड गर्नुहोस्">Download Family Tree PDF</a>
@@ -917,7 +960,7 @@
 
         <!-- PDF Section (original photos) -->
     <div id="pdf-panel" class="panel">
-      <h2>Family Document <span style="font-size:0.85rem;color:var(--ink-soft);font-weight:400">/ परिवार दस्तावेज</span></h2>
+      <h2>Family Document</h2>
       <p style="margin-bottom:18px;color:var(--ink-soft)">
         View or download the original family photo document.
       </p>
@@ -1079,69 +1122,69 @@
       "Dayaram Sharma": {
         name: "Dayaram Sharma",
         children: ["Tej Nath Paudel", "Bhawani Paudel", "Hari Chhetri", "Krishna Paudel", "Dhurba Raj Chhetri", "Keshav Paudel"],
-        photo: "photos/Dayaram_Sharma.jpg",
+        photo: "./Dayaram_Sharma.jpg",
         detail: "Dayaram Sharma had 6 sons."
       },
 
       "Tej Nath Paudel": {
         name: "Tej Nath Paudel",
         children: ["Navaraj Paudel", "Ramu Paudel", "Santosh Paudel"],
-        photo: "photos/Tej_Nath_Paudel.jpg",
+        photo: "./Tej_Nath_Paudel.jpg",
         detail: "Tej Nath Paudel has 3 sons."
       },
-      "Navaraj Paudel": { name: "Navaraj Paudel", children: [], photo: "photos/Navaraj_Paudel.jpg" },
-      "Ramu Paudel": { name: "Ramu Paudel", children: [], photo: "photos/Ramu_Paudel.jpg" },
-      "Santosh Paudel": { name: "Santosh Paudel", children: [], photo: "photos/Santosh_Paudel.jpg" },
+      "Navaraj Paudel": { name: "Navaraj Paudel", children: [], photo: "./Navaraj_Paudel.jpg" },
+      "Ramu Paudel": { name: "Ramu Paudel", children: [], photo: "./Ramu_Paudel.jpg" },
+      "Santosh Paudel": { name: "Santosh Paudel", children: [], photo: "./Santosh_Paudel.jpg" },
 
       "Bhawani Paudel": {
         name: "Bhawani Paudel",
         children: ["Abinash Paudel", "Abhishek Paudel"],
-        photo: "photos/Bhawani_Paudel.jpg",
+        photo: "./Bhawani_Paudel.jpg",
         detail: "Bhawani Paudel has 2 sons."
       },
-      "Abinash Paudel": { name: "Abinash Paudel", children: [], photo: "photos/Abinash_Paudel.jpg" },
-      "Abhishek Paudel": { name: "Abhishek Paudel", children: [], photo: "photos/Abhishek_Paudel.jpg" },
+      "Abinash Paudel": { name: "Abinash Paudel", children: [], photo: "./Abinash_Paudel.jpg" },
+      "Abhishek Paudel": { name: "Abhishek Paudel", children: [], photo: "./Abhishek_Paudel.jpg" },
 
       "Hari Chhetri": {
         name: "Hari Chhetri",
         children: ["Aashirwad Paudel"],
         deceased: true,
-        photo: "photos/Hari_Chhetri.jpg",
+        photo: "./Hari_Chhetri.jpg",
         detail: "Hari Chhetri had 1 son."
       },
-      "Aashirwad Paudel": { name: "Aashirwad Paudel", children: [], photo: "photos/Aashirwad_Paudel.jpg" },
+      "Aashirwad Paudel": { name: "Aashirwad Paudel", children: [], photo: "./Aashirwad_Paudel.jpg" },
 
       "Krishna Paudel": {
         name: "Krishna Paudel",
         children: ["Nirajan Paudel"],
-        photo: "photos/Krishna_Paudel.jpg",
+        photo: "./Krishna_Paudel.jpg",
         detail: "Krishna Paudel has 1 son."
       },
-      "Nirajan Paudel": { name: "Nirajan Paudel", children: [], photo: "photos/Nirajan_Paudel.jpg" },
+      "Nirajan Paudel": { name: "Nirajan Paudel", children: [], photo: "./Nirajan_Paudel.jpg" },
 
       "Dhurba Raj Chhetri": {
         name: "Dhurba Raj Chhetri",
         children: ["Anurodh Chhetri", "Apil Chhetri"],
-        photo: "photos/Dhurba_Raj_Chhetri.jpg",
+        photo: "./Dhurba_Raj_Chhetri.jpg",
         detail: "Dhurba Raj Chhetri has 2 sons."
       },
-      "Anurodh Chhetri": { name: "Anurodh Chhetri", children: [], photo: "photos/Anurodh_Chhetri.jpg" },
-      "Apil Chhetri": { name: "Apil Chhetri", children: [], photo: "photos/Apil_Chhetri.jpg" },
+      "Anurodh Chhetri": { name: "Anurodh Chhetri", children: [], photo: "./Anurodh_Chhetri.jpg" },
+      "Apil Chhetri": { name: "Apil Chhetri", children: [], photo: "./Apil_Chhetri.jpg" },
 
       "Keshav Paudel": {
         name: "Keshav Paudel",
         children: ["Kushal Paudel"],
-        photo: "photos/Keshav_Paudel.jpg",
+        photo: "./Keshav_Paudel.jpg",
         detail: "Keshav Paudel has 1 son."
       },
-      "Kushal Paudel": { name: "Kushal Paudel", children: [], photo: "photos/Kushal_Paudel.jpg" },
+      "Kushal Paudel": { name: "Kushal Paudel", children: [], photo: "./Kushal_Paudel.jpg" },
 
       "Fulkumari Chhetri": {
         name: "Fulkumari Chhetri",
         children: [],
         deceased: true,
         spouseOf: "Dayaram Sharma",
-        photo: "photos/Fulkumari_Chhetri.jpg"
+        photo: "./Fulkumari_Chhetri.jpg"
       }
     };
 
@@ -1154,84 +1197,70 @@
     });
 
     // ===================== STATE =====================
+    // Keep the default language explicitly initialized before the first render.
+    // Without this, renderPerson() stops with a ReferenceError and the home data stays blank.
+    let currentLanguage = "en";
     let currentId = "Bishu Sharma";
     let historyStack = [];
 
     // ===================== RENDER =====================
+    // GitHub repository stores JPG files in the repository root (beside index.html), not in /photos.
+    function photoUrl(path) {
+      const fileName = String(path || "").split("/").pop();
+      return new URL("./" + encodeURIComponent(fileName), window.location.href).href;
+    }
+    function displayName(name) {
+      return currentLanguage === "ne" ? (nepaliNames[name] || name) : name;
+    }
+    function tr(en, ne) { return currentLanguage === "ne" ? ne : en; }
     function renderPerson(id) {
       const person = familyData[id];
       if (!person) return;
-
       currentId = id;
       const card = document.getElementById("person-card");
       const backRow = document.getElementById("back-row");
       backRow.style.display = historyStack.length > 0 ? "flex" : "none";
-
       const hasChildren = person.children && person.children.length > 0;
       const parentId = parentOf[id];
       const parentName = parentId ? familyData[parentId].name : null;
-
-      let label = "Ancestor";
-      if (id === "Bishu Sharma") label = "Source • Root Ancestor";
-      else if (person.deceased) label = "In Loving Memory";
-      else if (parentName) label = "Son of " + parentName;
-
-      let html = `
-        <div class="person-label">${label}</div>
-      `;
-
-      if (person.photo) {
-        html += `<img class="person-photo" src="${person.photo}" alt="${person.name}" />`;
-      }
-
-      html += `<h2 class="person-name">${person.name}</h2>`;
-      if (person.ourBranch) {
-        html += `<div class="our-branch-badge">Our Branch</div>`;
-      }
-
-      if (parentName) {
-        html += `<p class="relation-note">Son of ${parentName}</p>`;
-      }
-      if (person.spouse) {
-        html += `<p class="spouse-note">Husband of ${person.spouse}</p>`;
-      }
-      if (person.spouseOf) {
-        html += `<p class="spouse-note">Wife of ${person.spouseOf}</p>`;
-      }
+      let label = tr("Ancestor", "पूर्वज");
+      if (id === "Bishu Sharma") label = tr("Source • Root Ancestor", "मूल पुर्खा");
+      else if (person.deceased) label = tr("In Loving Memory", "स्नेहपूर्वक स्मरणमा");
+      else if (parentName) label = currentLanguage === "ne" ? `${displayName(parentName)} का छोरा` : `Son of ${displayName(parentName)}`;
+      let html = `<div class="person-label">${label}</div>`;
+      if (person.photo) html += `<img class="person-photo" src="${photoUrl(person.photo)}" alt="${displayName(person.name)}" loading="lazy" onerror="this.onerror=null;this.style.display='none';" />`;
+      html += `<h2 class="person-name">${displayName(person.name)}</h2>`;
+      if (person.ourBranch) html += `<div class="our-branch-badge">${tr("Our Branch", "हाम्रो शाखा")}</div>`;
+      if (parentName) html += `<p class="relation-note">${currentLanguage === "ne" ? `${displayName(parentName)} का छोरा` : `Son of ${displayName(parentName)}`}</p>`;
+      if (person.spouse) html += `<p class="spouse-note">${currentLanguage === "ne" ? `${displayName(person.spouse)} का श्रीमान्` : `Husband of ${displayName(person.spouse)}`}</p>`;
+      if (person.spouseOf) html += `<p class="spouse-note">${currentLanguage === "ne" ? `${displayName(person.spouseOf)} की श्रीमती` : `Wife of ${displayName(person.spouseOf)}`}</p>`;
       if (person.detail) {
-        html += `<p class="detail-note">${person.detail}</p>`;
+        let detail = person.detail;
+        if (currentLanguage === "ne") {
+          const count = (person.children || []).length;
+          if (id === "Tirtaraj Sharma") detail = `उहाँ हाम्रा जिजुबुबा हुनुहुन्थ्यो। उहाँका ${count} छोरा थिए — ${displayName("Dayaram Sharma")}।`;
+          else if (person.ourBranch) detail = `${displayName(person.name)} हाम्रो शाखामा पर्नुहुन्छ। उहाँका ${count} छोरा थिए।`;
+          else if (count) detail = `${displayName(person.name)} का ${count} छोरा ${/had|were/i.test(person.detail) ? "थिए" : "छन्"}।`;
+          else detail = translatePhrase(detail);
+        }
+        html += `<p class="detail-note">${detail}</p>`;
       }
-
       if (hasChildren) {
         const count = person.children.length;
-        html += `<p class="children-title">${count} Son${count > 1 ? 's' : ''} & Children</p>`;
-        html += `<div class="children-grid">`;
+        html += `<p class="children-title">${currentLanguage === "ne" ? `${count} छोरा तथा सन्तान` : `${count} Son${count > 1 ? 's' : ''} & Children`}</p><div class="children-grid">`;
         person.children.forEach(childId => {
           const child = familyData[childId];
-          const isDeceased = child && child.deceased;
-          const isOurBranch = child && child.ourBranch;
-          html += `
-            <div class="child-card ${isDeceased ? 'deceased' : ''} ${isOurBranch ? 'our-branch-card' : ''}" onclick="enterPerson('${childId}')">
-              ${isDeceased ? '<span class="deceased-badge">In Memory</span>' : ''}
-              ${isOurBranch ? '<span class="our-branch-mini">Our Branch</span>' : ''}
-              ${child && child.photo ? `<img class="child-photo" src="${child.photo}" alt="${child.name}" />` : ''}
-              <div class="child-name">${child ? child.name : childId}</div>
-              <button class="enter-btn" onclick="event.stopPropagation(); enterPerson('${childId}')">
-                Enter
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
-            </div>
-          `;
+          if (!child) return;
+          html += `<div class="child-card ${child.deceased ? 'deceased' : ''} ${child.ourBranch ? 'our-branch-card' : ''}" onclick="enterPerson('${childId}')">`;
+          if (child.deceased) html += `<span class="deceased-badge">${tr("In Memory", "स्मृतिमा")}</span>`;
+          if (child.ourBranch) html += `<span class="our-branch-mini">${tr("Our Branch", "हाम्रो शाखा")}</span>`;
+          if (child.photo) html += `<img class="child-photo" src="${photoUrl(child.photo)}" alt="${displayName(child.name)}" loading="lazy" onerror="this.onerror=null;this.style.display='none';" />`;
+          html += `<div class="child-name">${displayName(child.name)}</div><button class="enter-btn" onclick="event.stopPropagation(); enterPerson('${childId}')">${tr("Enter", "हेर्नुहोस्")} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>`;
         });
         html += `</div>`;
       } else {
-        if (person.deceased) {
-          html += `<p class="leaf-note">Remembered with love and respect.</p>`;
-        } else {
-          html += `<p class="leaf-note">This branch currently has no further recorded children.</p>`;
-        }
+        html += `<p class="leaf-note">${person.deceased ? tr("Remembered with love and respect.", "माया र सम्मानका साथ सधैँ सम्झिइनेछ।") : tr("This branch currently has no further recorded children.", "यस शाखामा हाल थप सन्तानको विवरण अभिलेख गरिएको छैन।")}</p>`;
       }
-
       card.innerHTML = html;
     }
 
@@ -1249,8 +1278,19 @@
     }
 
     // ===================== NAV =====================
+    function toggleMobileMenu() {
+      const nav = document.getElementById("main-navigation");
+      const toggle = document.getElementById("mobile-menu-toggle");
+      const isOpen = nav.classList.toggle("mobile-open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
+    }
+
     function showView(view) {
       document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+      const nav = document.getElementById("main-navigation");
+      const toggle = document.getElementById("mobile-menu-toggle");
+      if (nav) nav.classList.remove("mobile-open");
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
       ["treeview-panel","memory-panel","pdf-panel","about-panel","inspiration-panel","contact-panel"].forEach(id => { const p=document.getElementById(id); if(p) p.classList.remove("visible"); });
       document.getElementById("person-view").style.display="none";
       if(view==="tree") document.getElementById("person-view").style.display="block";
@@ -1268,177 +1308,105 @@
       const input=document.getElementById("search-input"), results=document.getElementById("search-results");
       if(!input||!results)return; const query=input.value.trim().toLowerCase(); results.innerHTML=""; results.classList.remove("has-results"); if(!query)return;
       const matches=Object.keys(familyData).filter(id=>familyData[id].name.toLowerCase().includes(query)||(nepaliNames[id]&&nepaliNames[id].includes(input.value.trim())));
-      if(!matches.length){results.innerHTML="<p style='color:var(--ink-soft)'>No matching family member found.</p>";results.classList.add("has-results");return;}
-      matches.forEach(id=>{const div=document.createElement("div");div.className="search-item";div.textContent=familyData[id].name+(nepaliNames[id]?" ("+nepaliNames[id]+")":"");div.onclick=()=>{historyStack=[];if(id!=="Bishu Sharma")historyStack=["Bishu Sharma"];showView("tree");renderPerson(id);results.classList.remove("has-results");};results.appendChild(div);});results.classList.add("has-results");
+      if(!matches.length){results.textContent=currentLanguage==="ne"?"परिवारको सदस्य भेटिएन।":"No matching family member found.";results.classList.add("has-results");return;}
+      matches.forEach(id=>{const div=document.createElement("div");div.className="search-item";div.textContent=displayName(id);div.onclick=()=>{historyStack=[];if(id!=="Bishu Sharma")historyStack=["Bishu Sharma"];showView("tree");renderPerson(id);results.classList.remove("has-results");};results.appendChild(div);});results.classList.add("has-results");
     }
+
+    // Restore live search handlers so family members can be found while typing or pressing Enter.
+    (function bindSearchHandlers() {
+      const input = document.getElementById("search-input");
+      if (!input) return;
+      input.addEventListener("input", performSearch);
+      input.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          performSearch();
+        }
+      });
+    })();
 
     document.addEventListener("click", function(e) {
       const box = document.querySelector(".header-search");
       if (box && !box.contains(e.target)) {
-        document.getElementById("search-results").classList.remove("has-results");
+        const results = document.getElementById("search-results");
+        if (results) results.classList.remove("has-results");
       }
     });
 
     
-    // Nepali name map (transliteration / common forms)
+    // Every family member has a Nepali-script display name. Keep IDs in English internally for navigation/search.
     const nepaliNames = {
-      "Bishu Sharma": "बिशु शर्मा",
-      "Basanta Sharma": "बसन्त शर्मा",
-      "Kalu Sharma": "कालु शर्मा",
-      "Sundar Sharma": "सुन्दर शर्मा",
-      "Sumanta Sharma": "सुमन्त शर्मा",
-      "Ramu Sharma": "रमु शर्मा",
-      "Balavadra Sharma": "बलभद्र शर्मा",
-      "Dharma Datta Sharma": "धर्मदत्त शर्मा",
-      "Motilal Sharma": "मोतीलाल शर्मा",
-      "Tirtaraj Sharma": "तीर्थराज शर्मा",
-      "Dayaram Sharma": "दयाराम शर्मा",
-      "Tej Nath Paudel": "तेजनाथ पौडेल",
-      "Bhawani Paudel": "भवानी पौडेल",
-      "Hari Chhetri": "हरि क्षेत्री",
-      "Krishna Paudel": "कृष्ण पौडेल",
-      "Dhurba Raj Chhetri": "धुर्वराज क्षेत्री",
-      "Keshav Paudel": "केशव पौडेल",
-      "Navaraj Paudel": "नवराज पौडेल",
-      "Ramu Paudel": "रमु पौडेल",
-      "Santosh Paudel": "सन्तोष पौडेल",
-      "Abinash Paudel": "अभिनाश पौडेल",
-      "Abhishek Paudel": "अभिषेक पौडेल",
-      "Aashirwad Paudel": "आशिर्वाद पौडेल",
-      "Nirajan Paudel": "निरजन पौडेल",
-      "Anurodh Chhetri": "अनुरोध क्षेत्री",
-      "Apil Chhetri": "अपिल क्षेत्री",
-      "Kushal Paudel": "कुशल पौडेल",
-      "Fulkumari Chhetri": "फुलकुमारी क्षेत्री"
+      "Bishu Sharma":"बिशु शर्मा", "Basanta Sharma":"बसन्त शर्मा", "Sundar Sharma":"सुन्दर शर्मा", "Sumanta Sharma":"सुमन्त शर्मा", "Kalu Sharma":"कालु शर्मा", "Ramu Sharma":"रामु शर्मा", "Hari Sharma":"हरि शर्मा", "Jay Ballap Sharma":"जय बल्लभ शर्मा", "Kantanu Sharma":"कान्तनु शर्मा", "Balavadra Sharma":"बलभद्र शर्मा", "Dharma Datta Sharma":"धर्मदत्त शर्मा", "Tritha Sharma":"त्रिथा शर्मा", "Lekhnanth Sharma":"लेखनाथ शर्मा", "Tham Parsad Sharma":"थामप्रसाद शर्मा", "Kalu Sharma (Dharma)":"कालु शर्मा", "Pasupati Sharma":"पशुपति शर्मा", "Bhim Sharma":"भीम शर्मा", "Motilal Sharma":"मोतीलाल शर्मा", "Tirtaraj Sharma":"तीर्थराज शर्मा", "Diliparsad Sharma":"दिलीप्रसाद शर्मा", "Shiva Sharma":"शिव शर्मा", "Puran Sharma":"पुरण शर्मा", "Tanka Sharma":"टंक शर्मा", "Ragunath Sharma":"रघुनाथ शर्मा", "Chirajibi Sharma":"चिरञ्जीवी शर्मा", "Min Sharma":"मीन शर्मा", "Pirthivi Sharma 1st":"पृथ्वी शर्मा (पहिलो)", "GhanaRaj Sharma":"घनराज शर्मा", "Prithivi Sharma 2nd":"पृथ्वी शर्मा (दोस्रो)", "Gokul Sharma":"गोकुल शर्मा", "Ananta Sharma":"अनन्त शर्मा", "Nilkhanta Sharma":"नीलकण्ठ शर्मा", "Chandra Sharma":"चन्द्र शर्मा", "Krishna Sharma":"कृष्ण शर्मा", "Ganesh Sharma":"गणेश शर्मा", "Laxman Sharma":"लक्ष्मण शर्मा", "Netra Sharma":"नेत्र शर्मा", "Chandika Sharma":"चण्डिका शर्मा", "Uttam Sharma":"उत्तम शर्मा", "Bharat Sharma":"भरत शर्मा", "Dayaram Sharma":"दयाराम शर्मा", "Tej Nath Paudel":"तेजनाथ पौडेल", "Navaraj Paudel":"नवराज पौडेल", "Ramu Paudel":"रामु पौडेल", "Santosh Paudel":"सन्तोष पौडेल", "Bhawani Paudel":"भवानी पौडेल", "Abinash Paudel":"अविनाश पौडेल", "Abhishek Paudel":"अभिषेक पौडेल", "Hari Chhetri":"हरि क्षेत्री", "Aashirwad Paudel":"आशीर्वाद पौडेल", "Krishna Paudel":"कृष्ण पौडेल", "Nirajan Paudel":"निराजन पौडेल", "Dhurba Raj Chhetri":"धुर्वराज क्षेत्री", "Anurodh Chhetri":"अनुरोध क्षेत्री", "Apil Chhetri":"अपिल क्षेत्री", "Keshav Paudel":"केशव पौडेल", "Kushal Paudel":"कुशल पौडेल", "Fulkumari Chhetri":"फुलकुमारी क्षेत्री"
     };
 
     function renderVisualTree() {
-      const container = document.getElementById("visual-tree");
-      if (!container) return;
-
+      const container=document.getElementById("visual-tree");
+      if(!container) return;
       function buildNode(id) {
-        const person = familyData[id];
-        if (!person) return "";
-        const ne = nepaliNames[person.name] || "";
-        const classes = ["tree-person"];
-        if (person.ourBranch) classes.push("our-branch");
-        if (person.deceased) classes.push("deceased");
-
-        let html = `<li>
-          <span class="${classes.join(" ")}" onclick="showView('tree'); enterPerson('${id}')">
-            ${person.name}
-            ${ne ? `<span class="ne">(${ne})</span>` : ""}
-            ${person.ourBranch ? '<span class="tree-badge">Our Branch</span>' : ""}
-          </span>`;
-
-        if (person.children && person.children.length > 0) {
-          html += "<ul>";
-          person.children.forEach(cid => {
-            html += buildNode(cid);
-          });
-          html += "</ul>";
-        }
-        html += "</li>";
-        return html;
+        const person=familyData[id]; if(!person) return "";
+        const classes=["tree-person"];
+        if(person.ourBranch) classes.push("our-branch");
+        if(person.deceased) classes.push("deceased");
+        let html=`<li><span class="${classes.join(" ")}" role="button" tabindex="0" onclick="showView('tree');enterPerson('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showView('tree');enterPerson('${id}');}">${displayName(person.name)}${person.ourBranch?`<span class="tree-badge">${tr("Our Branch","हाम्रो शाखा")}</span>`:""}</span>`;
+        if(person.children && person.children.length){html+="<ul>";person.children.forEach(cid=>{html+=buildNode(cid);});html+="</ul>";}
+        html+="</li>"; return html;
       }
-
-      container.innerHTML = `<ul class="tree-node">${buildNode("Bishu Sharma")}</ul>`;
+      container.innerHTML=`<ul class="tree-node">${buildNode("Bishu Sharma")}</ul>`;
     }
 
-    
-    function performSearch() {
-      const input = document.getElementById("search-input");
-      const resultsEl = document.getElementById("search-results");
-      if (!input || !resultsEl) return;
+    const staticNe = {
+      "Our Ancestral Legacy":"हाम्रो पुर्ख्यौली विरासत", "Go Back":"पछाडि जानुहोस्", "LinkedIn":"लिङ्क्डइन", "A living record of our family roots":"हाम्रो पारिवारिक जरा र इतिहासको जीवन्त अभिलेख", "Search a family member...":"परिवारका सदस्य खोज्नुहोस्...", "Find":"खोज्नुहोस्", "Family Tree":"वंशवृक्ष", "Tree View":"वंशवृक्ष दृश्य", "In Loving Memory":"स्नेहपूर्वक स्मरणमा", "About":"परिचय", "Inspiration":"प्रेरणा", "Contact":"सम्पर्क", "LANGUAGE / भाषा":"भाषा चयन गर्नुहोस्", "Those who left us too soon remain forever in our hearts and in this family tree.":"हामीलाई चाँडै छोडेर जानुभएका प्रियजनहरू हाम्रो हृदय र यस वंशवृक्षमा सधैँ रहनुहुनेछ।", "Beloved Grandmother":"प्रिय हजुरआमा", "Wife of Dayaram Sharma.":"दयाराम शर्माकी श्रीमती।", "A gentle soul whose love and care shaped generations of our family.":"उहाँको माया र हेरचाहले हाम्रो परिवारका पुस्ताहरूलाई आकार दियो।", "Forever remembered • Forever loved":"सधैँ सम्झनामा • सधैँ मायामा", "Beloved Son of Fulkumari Chhetri":"फुलकुमारी क्षेत्रीका प्रिय छोरा", "A cherished member of the family whose presence is deeply missed.":"परिवारका प्रिय सदस्य, जसको अभाव हामीलाई गहिरोसँग महसुस हुन्छ।", "Rest in peace • Always in our hearts":"चिरशान्तिको कामना • सधैँ हाम्रो हृदयमा", "Their names live on through every story we share and every root we honor.":"हामीले सुनाउने प्रत्येक कथा र सम्मान गर्ने प्रत्येक जरामार्फत उहाँहरूको नाम जीवित रहन्छ।", "Family Tree View / वंशवृक्ष दृश्य":"वंशवृक्ष दृश्य", "Explore family branches below, or open and download the original family tree PDF.":"तल परिवारका शाखाहरू हेर्नुहोस् वा मूल वंशवृक्ष PDF खोल्नुहोस् र डाउनलोड गर्नुहोस्।", "Open PDF in New Tab":"PDF नयाँ ट्याबमा खोल्नुहोस्", "Download Family Tree PDF":"वंशवृक्ष PDF डाउनलोड गर्नुहोस्", "If preview is unavailable, use Open PDF or Download PDF.":"पूर्वावलोकन नखुलेमा PDF खोल्नुहोस् वा PDF डाउनलोड गर्नुहोस्।", "Family Document":"पारिवारिक दस्तावेज", "View or download the original family photo document.":"मूल पारिवारिक तस्बिरहरूको दस्तावेज हेर्नुहोस् वा डाउनलोड गर्नुहोस्।", "View PDF in Browser":"PDF ब्राउजरमा हेर्नुहोस्", "Download PDF":"PDF डाउनलोड गर्नुहोस्", "If the preview does not load, use the buttons above.":"पूर्वावलोकन नखुलेमा माथिका बटनहरू प्रयोग गर्नुहोस्।", "About This Family Tree":"यस वंशवृक्षबारे", "This digital family tree was created to preserve and share our ancestral history in a simple, easy-to-navigate way — especially for elders who prefer clear buttons and large text.":"यो डिजिटल वंशवृक्ष हाम्रो पुर्ख्यौली इतिहासलाई सरल र सजिलै प्रयोग गर्न मिल्ने तरिकाले सुरक्षित राख्न र साझा गर्न बनाइएको हो—विशेष गरी स्पष्ट बटन र ठूला अक्षर मन पराउने ज्येष्ठ सदस्यहरूका लागि।", "It records the male line of our family. More names, photos, and stories can be added over time.":"यसले हाम्रो परिवारको पितृवंशीय रेखा अभिलेख गर्छ। समयसँगै थप नाम, तस्बिर र कथाहरू समावेश गर्न सकिन्छ।", "Built by:":"निर्माता:", "Ancestral insights & guidance:":"पुर्ख्यौली जानकारी तथा मार्गदर्शन:", "Inspiration Behind This Project":"यस परियोजनाको प्रेरणा", "This family tree was born from a desire to keep our roots alive for the next generations.":"आउँदा पुस्ताका लागि हाम्रो पारिवारिक जरा जीवित राख्ने चाहनाबाट यो वंशवृक्ष बनेको हो।", "The idea and the entire website were created by":"यो अवधारणा र सम्पूर्ण वेबसाइटका निर्माता हुन्", "Deep gratitude goes to his father,":"उहाँका बुबाप्रति हार्दिक कृतज्ञता,", "who shared the ancestral knowledge, stories, and names that made this possible.":"जसले यो सम्भव बनाउन पुर्ख्यौली ज्ञान, कथा र नामहरू साझा गर्नुभयो।", "A family tree is more than names — it is the living memory of those who came before us.":"वंशवृक्ष नामहरूको सूची मात्र होइन—यो हामीभन्दा अघिका पुस्ताहरूको जीवित स्मृति हो।", "Contact Anurodh":"अनुरोधसँग सम्पर्क गर्नुहोस्", "✉ Contact Anurodh":"✉ अनुरोधसँग सम्पर्क गर्नुहोस्", "© 2026 Anurodh Chhetri. All rights reserved.":"© २०२६ अनुरोध क्षेत्री। सर्वाधिकार सुरक्षित।", "Have family history to share, a correction to suggest, or a story to preserve? Get in touch.":"परिवारको इतिहास साझा गर्न, सुधार सुझाउन वा कथा सुरक्षित राख्न चाहनुहुन्छ? सम्पर्क गर्नुहोस्।", "Phone":"फोन", "Email":"इमेल", "Send an email →":"इमेल पठाउनुहोस् →", "Call Anurodh →":"अनुरोधलाई फोन गर्नुहोस् →", "View LinkedIn profile →":"लिङ्क्डइन प्रोफाइल हेर्नुहोस् →", "Made with care by":"मायासहित निर्माणकर्ता", "Guided by the wisdom of":"मार्गदर्शन तथा पुर्ख्यौली ज्ञान:", "No matching family member found.":"परिवारको सदस्य भेटिएन।"
+    };
+    const staticEn = Object.fromEntries(Object.entries(staticNe).map(([en,ne])=>[ne,en]));
+    const navLabels={en:{tree:"Family Tree",treeview:"Tree View",memory:"In Loving Memory",pdf:"PDF",about:"About",inspiration:"Inspiration",contact:"Contact"},ne:{tree:"वंशवृक्ष",treeview:"वंशवृक्ष दृश्य",memory:"स्नेहपूर्वक स्मरणमा",pdf:"PDF",about:"परिचय",inspiration:"प्रेरणा",contact:"सम्पर्क"}};
 
-      const query = input.value.trim().toLowerCase();
-      resultsEl.innerHTML = "";
-      resultsEl.classList.remove("has-results");
-
-      if (query.length < 1) return;
-
-      const matches = Object.keys(familyData).filter(id => {
-        const name = familyData[id].name.toLowerCase();
-        return name.includes(query);
-      });
-
-      if (matches.length === 0) {
-        const div = document.createElement("div");
-        div.className = "search-item";
-        div.style.color = "var(--ink-soft)";
-        div.style.cursor = "default";
-        div.textContent = "No matching family member found.";
-        resultsEl.appendChild(div);
-        resultsEl.classList.add("has-results");
-        return;
-      }
-
-      matches.forEach(id => {
-        const person = familyData[id];
-        const div = document.createElement("div");
-        div.className = "search-item";
-        let text = person.name;
-        if (person.deceased) text += " (In Memory)";
-        if (person.ourBranch) text += " — Our Branch";
-        div.textContent = text;
-        div.onclick = function() {
-          historyStack = [];
-          if (id !== "Bishu Sharma") historyStack = ["Bishu Sharma"];
-          resultsEl.innerHTML = "";
-          resultsEl.classList.remove("has-results");
-          input.value = "";
-          showView("tree");
-          renderPerson(id);
-          document.getElementById("person-view").scrollIntoView({ behavior: "smooth", block: "start" });
-        };
-        resultsEl.appendChild(div);
-      });
-      resultsEl.classList.add("has-results");
+    function translatePhrase(text) {
+      if (currentLanguage !== "ne") return text;
+      return staticNe[text] || text;
     }
-
-    // Live search while typing
-    document.addEventListener("DOMContentLoaded", function() {
-      const input = document.getElementById("search-input");
-      if (input) {
-        input.addEventListener("input", function() {
-          performSearch();
-        });
-        input.addEventListener("keydown", function(e) {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            performSearch();
-          }
-        });
+    function translateStaticText() {
+      const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+      let node;
+      while((node=walker.nextNode())) {
+        if (!node.nodeValue || !node.nodeValue.trim()) continue;
+        const raw=node.nodeValue, trimmed=raw.trim();
+        let translated=trimmed;
+        if (currentLanguage === "ne") translated=staticNe[trimmed] || nepaliNames[trimmed] || trimmed;
+        else translated=staticEn[trimmed] || Object.keys(nepaliNames).find(k=>nepaliNames[k]===trimmed) || trimmed;
+        if (translated !== trimmed) node.nodeValue=raw.replace(trimmed,translated);
       }
-    });
-    // Also bind immediately in case DOM already loaded
-    (function() {
-      const input = document.getElementById("search-input");
-      if (input) {
-        input.addEventListener("input", performSearch);
-        input.addEventListener("keydown", function(e) {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            performSearch();
-          }
-        });
-      }
-    })();
-
-    let currentLanguage="en";
-    const navLabels={en:{tree:"Family Tree",treeview:"Tree View",memory:"In Loving Memory",pdf:"PDF",about:"About",inspiration:"Inspiration",contact:"Contact"},ne:{tree:"वंशवृक्ष",treeview:"वंशवृक्ष दृश्य",memory:"स्मृतिमा",pdf:"PDF",about:"परिचय",inspiration:"प्रेरणा",contact:"सम्पर्क"}};
-    function setLanguage(lang){currentLanguage=lang==="ne"?"ne":"en";document.documentElement.lang=currentLanguage;
-      document.querySelectorAll("[data-en][data-ne]").forEach(el=>{const val=el.getAttribute(currentLanguage==="ne"?"data-ne":"data-en");if(!val)return;const tn=Array.from(el.childNodes).find(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim());if(tn)tn.textContent=val;else if(!el.children.length)el.textContent=val;});
-      document.querySelectorAll(".nav-btn").forEach(btn=>{const label=navLabels[currentLanguage][btn.dataset.view];if(label){const icon=btn.querySelector(".nav-icon");btn.textContent="";if(icon)btn.appendChild(icon);btn.appendChild(document.createTextNode((icon?" ":"")+label));}});
-      document.getElementById("lang-en").classList.toggle("active",currentLanguage==="en");document.getElementById("lang-ne").classList.toggle("active",currentLanguage==="ne");
-      document.getElementById("search-input").placeholder=currentLanguage==="ne"?"परिवारको सदस्य खोज्नुहोस्...":"Search a family member...";
-      const b=document.querySelector(".header-search button");if(b)b.textContent=currentLanguage==="ne"?"खोज्नुहोस्":"Find";
+      document.querySelectorAll("img[alt]").forEach(img=>{
+        const original=img.getAttribute("data-original-alt") || img.alt;
+        if (!img.hasAttribute("data-original-alt")) img.setAttribute("data-original-alt",original);
+        const en=img.getAttribute("data-original-alt");
+        img.alt=currentLanguage === "ne" ? (nepaliNames[en] || staticNe[en] || en) : (staticEn[en] || Object.keys(nepaliNames).find(k=>nepaliNames[k]===en) || en);
+      });
+      const search=document.getElementById("search-input");
+      if(search) search.placeholder=currentLanguage === "ne" ? "परिवारका सदस्य खोज्नुहोस्..." : "Search a family member...";
+      const find=document.querySelector(".header-search button"); if(find) find.textContent=currentLanguage === "ne" ? "खोज्नुहोस्" : "Find";
+      document.querySelectorAll(".nav-btn").forEach(btn=>{
+        const label=navLabels[currentLanguage][btn.dataset.view]; if(!label)return;
+        const icon=btn.querySelector(".nav-icon"); btn.textContent=""; if(icon)btn.appendChild(icon); btn.appendChild(document.createTextNode((icon?" ":"")+label));
+      });
+      document.getElementById("lang-en").classList.toggle("active",currentLanguage==="en");
+      document.getElementById("lang-ne").classList.toggle("active",currentLanguage==="ne");
+      document.getElementById("lang-en").setAttribute("aria-pressed",String(currentLanguage==="en"));
+      document.getElementById("lang-ne").setAttribute("aria-pressed",String(currentLanguage==="ne"));
+    }
+    function setLanguage(lang) {
+      currentLanguage=lang==="ne"?"ne":"en";
+      document.documentElement.lang=currentLanguage;
+      document.title=currentLanguage==="ne"?"हाम्रो पुर्ख्यौली विरासत – वंशवृक्ष":"Our Ancestral Legacy – Family Tree";
+      translateStaticText();
+      renderPerson(currentId || "Bishu Sharma");
       renderVisualTree();
     }
 
     // ===================== INIT =====================
     renderPerson("Bishu Sharma");
     showView("tree");
+    translateStaticText();
+    document.title="Our Ancestral Legacy – Family Tree";
   </script>
 </body>
 </html>
